@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-17
+
+### Added
+
+- Configuration check management (`POST/GET /checks`, `GET /checks/{id}`)
+- Validation run submission (`POST /servers/{server_id}/validation-runs`)
+- `ValidationRun` and `ValidationResult` models, with relationships to `Server` and `Check`
+- Pass/fail determination by comparing submitted `actual_value` against a check's `expected_value`
+- `app/services/validation_service.py` — first use of a service-layer function for multi-table transaction logic
+
+### Changed
+
+- Extended the database schema with `checks`, `validation_runs`, and `validation_results` tables
+
 ## [0.2.0] - 2026-08-16
 
 ### Added

@@ -12,6 +12,10 @@ sys.path.append(os.getcwd())
 from app.core.config import DATABASE_URL
 from app.db.database import Base
 from app.models.server import Server  # noqa: F401 — registers the model with Base.metadata
+from app.models.check import Check  # noqa: F401
+from app.models.validation_run import ValidationRun  # noqa: F401
+from app.models.validation_result import ValidationResult  # noqa: F401
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

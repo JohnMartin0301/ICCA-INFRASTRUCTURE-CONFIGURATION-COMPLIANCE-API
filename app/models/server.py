@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 
@@ -10,3 +11,5 @@ class Server(Base):
     operating_system = Column(String, nullable=False)
     environment = Column(String, nullable=False)
     status = Column(String, nullable=False, default="active")
+    
+    validation_runs = relationship("ValidationRun", back_populates="server")
