@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-18
+
+### Added
+
+- `Finding` model with database-enforced prevention of duplicate open findings (partial unique index on server+check, scoped to `status = 'open'`)
+- Automatic finding reconciliation on validation submission: first failure opens a finding, repeated failures update it, a passing result resolves it
+- `app/services/finding_service.py` — `reconcile_finding()`, the core duplicate-prevention/auto-resolve logic
+- Read-only findings API (`GET /findings`, `GET /findings/{id}`)
+
+### Changed
+
+- `submit_validation_run()` now calls finding reconciliation for every submitted result, as part of the same transaction as the validation run and its results
+- Added a `409 Conflict` safety net around validation-run commits, backing the new database constraint
+
 ## [0.3.0] - 2026-08-17
 
 ### Added

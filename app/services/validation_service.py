@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
 
 from app.models.server import Server
@@ -6,6 +7,7 @@ from app.models.check import Check
 from app.models.validation_run import ValidationRun
 from app.models.validation_result import ValidationResult
 from app.schemas.validation import ValidationRunCreate
+from app.services.finding_service import reconcile_finding
 
 
 def submit_validation_run(server_id: int, run_data: ValidationRunCreate, db: Session) -> ValidationRun:
@@ -15,7 +17,7 @@ def submit_validation_run(server_id: int, run_data: ValidationRunCreate, db: Ses
 
     validation_run = ValidationRun(server_id=server_id)
     db.add(validation_run)
-    db.flush()  # sends the INSERT so validation_run.id exists, without committing yet
+    db.flush()
 
     for result_in in run_data.results:
         check = db.get(Check, result_in.check_id)
@@ -28,8 +30,7 @@ def submit_validation_run(server_id: int, run_data: ValidationRunCreate, db: Ses
 
         passed = result_in.actual_value.strip().lower() == check.expected_value.strip().lower()
 
-        # Day 4 will add finding creation/resolution logic right here,
-        # using `passed`, `server_id`, and `check.id`. Not implemented yet.
+        reconcile_finding(db, server_id, check.id, check.severity, passed)
 
         validation_result = ValidationResult(
             validation_run_id=validation_run.id,
@@ -40,6 +41,13 @@ def submit_validation_run(server_id: int, run_data: ValidationRunCreate, db: Ses
         )
         db.add(validation_result)
 
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A conflicting update occurred while recording this validation run. Please try again.",
+        )
     db.refresh(validation_run)
     return validation_run

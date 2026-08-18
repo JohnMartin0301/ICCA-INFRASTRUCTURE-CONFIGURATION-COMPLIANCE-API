@@ -15,6 +15,7 @@ from app.models.server import Server  # noqa: F401 — registers the model with 
 from app.models.check import Check  # noqa: F401
 from app.models.validation_run import ValidationRun  # noqa: F401
 from app.models.validation_result import ValidationResult  # noqa: F401
+from app.models.finding import Finding  # noqa: F401
 
 
 # this is the Alembic Config object, which provides
