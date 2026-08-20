@@ -5,12 +5,13 @@ from sqlalchemy.exc import IntegrityError
 from app.db.database import get_db
 from app.models.server import Server
 from app.schemas.server import ServerCreate, ServerUpdate, ServerOut
+from app.core.security import get_current_user, require_role
 
 router = APIRouter(prefix="/servers", tags=["servers"])
 
 
 @router.post("", response_model=ServerOut, status_code=status.HTTP_201_CREATED)
-def create_server(server: ServerCreate, db: Session = Depends(get_db)):
+def create_server(server: ServerCreate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
     new_server = Server(**server.model_dump())
     db.add(new_server)
     try:
@@ -26,12 +27,12 @@ def create_server(server: ServerCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[ServerOut])
-def list_servers(db: Session = Depends(get_db)):
+def list_servers(db: Session = Depends(get_db), _=Depends(get_current_user)):
     return db.query(Server).all()
 
 
 @router.get("/{server_id}", response_model=ServerOut)
-def get_server(server_id: int, db: Session = Depends(get_db)):
+def get_server(server_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):
     server = db.get(Server, server_id)
     if not server:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Server not found")
@@ -39,7 +40,7 @@ def get_server(server_id: int, db: Session = Depends(get_db)):
 
 
 @router.patch("/{server_id}", response_model=ServerOut)
-def update_server(server_id: int, updates: ServerUpdate, db: Session = Depends(get_db)):
+def update_server(server_id: int, updates: ServerUpdate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
     server = db.get(Server, server_id)
     if not server:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Server not found")
@@ -60,7 +61,7 @@ def update_server(server_id: int, updates: ServerUpdate, db: Session = Depends(g
 
 
 @router.delete("/{server_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_server(server_id: int, db: Session = Depends(get_db)):
+def delete_server(server_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
     server = db.get(Server, server_id)
     if not server:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Server not found")

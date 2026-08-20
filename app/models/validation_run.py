@@ -9,6 +9,7 @@ class ValidationRun(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     server_id = Column(Integer, ForeignKey("servers.id"), nullable=False)
+    submitted_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     run_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     server = relationship("Server", back_populates="validation_runs")

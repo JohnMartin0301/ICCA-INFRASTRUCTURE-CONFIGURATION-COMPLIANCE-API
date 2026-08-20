@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-20
+
+### Added
+
+- `User` model with hashed passwords and a `role` field (`viewer`/`engineer`/`admin`)
+- `POST /auth/register` and `POST /auth/login` (JWT-based)
+- `app/core/security.py` — password hashing, JWT creation/verification, `get_current_user`, `require_role` dependencies
+- `validation_runs.submitted_by`, recording which authenticated user submitted each validation run
+
+### Changed
+
+- All `/servers`, `/checks`, `/findings`, and `/servers/{id}/validation-runs` endpoints now require authentication
+- Writes on `/servers` and `/checks` restricted to the `admin` role; validation-run submission restricted to `engineer`/`admin`
+- `submit_validation_run()` now records the submitting user's id
+
 ## [0.4.0] - 2026-08-18
 
 ### Added

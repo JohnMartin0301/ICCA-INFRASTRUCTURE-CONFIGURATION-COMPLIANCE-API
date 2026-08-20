@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 
@@ -24,6 +25,7 @@ class ValidationResultOut(BaseModel):
 class ValidationRunOut(BaseModel):
     id: int
     server_id: int
+    submitted_by: Optional[int] = None
     run_at: datetime
     results: list[ValidationResultOut]
 

@@ -10,12 +10,12 @@ from app.schemas.validation import ValidationRunCreate
 from app.services.finding_service import reconcile_finding
 
 
-def submit_validation_run(server_id: int, run_data: ValidationRunCreate, db: Session) -> ValidationRun:
+def submit_validation_run(server_id: int, run_data: ValidationRunCreate, db: Session, submitted_by: int) -> ValidationRun:
     server = db.get(Server, server_id)
     if not server:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Server not found")
 
-    validation_run = ValidationRun(server_id=server_id)
+    validation_run = ValidationRun(server_id=server_id, submitted_by=submitted_by)
     db.add(validation_run)
     db.flush()
 

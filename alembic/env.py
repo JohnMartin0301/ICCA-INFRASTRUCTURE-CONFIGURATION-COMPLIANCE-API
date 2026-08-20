@@ -16,6 +16,7 @@ from app.models.check import Check  # noqa: F401
 from app.models.validation_run import ValidationRun  # noqa: F401
 from app.models.validation_result import ValidationResult  # noqa: F401
 from app.models.finding import Finding  # noqa: F401
+from app.models.user import User  # noqa: F401
 
 
 # this is the Alembic Config object, which provides
