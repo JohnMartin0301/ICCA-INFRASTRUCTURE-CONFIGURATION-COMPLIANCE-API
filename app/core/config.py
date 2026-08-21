@@ -14,3 +14,5 @@ JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "30"))
 
 if not JWT_SECRET_KEY:
     raise RuntimeError("JWT_SECRET_KEY is not set. Check your .env file.")
+
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL")

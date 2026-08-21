@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Index, text
+from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 
@@ -24,3 +25,5 @@ class Finding(Base):
             postgresql_where=text("status = 'open'"),
         ),
     )
+    
+    remediation = relationship("Remediation", back_populates="finding", uselist=False)

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-20
+
+### Added
+
+- `Remediation` model, one per finding, with a forward-only status lifecycle (`open → in_progress → resolved`)
+- `POST /findings/{finding_id}/remediation`, `PATCH /remediation/{remediation_id}`
+- Remediation nested into `GET /findings` responses
+- Pagination (`page`, `page_size`) on `GET /servers` and `GET /findings`; `status`/`severity` filtering on `GET /findings`
+- First Pytest setup: dedicated test database, `conftest.py` fixtures, service-layer tests for remediation creation and status transitions
+
+### Changed
+
+- `FindingOut` now includes an optional nested `remediation` field
+
 ## [0.5.0] - 2026-08-20
 
 ### Added

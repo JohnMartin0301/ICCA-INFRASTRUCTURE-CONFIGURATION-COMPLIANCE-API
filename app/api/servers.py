@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -27,8 +27,14 @@ def create_server(server: ServerCreate, db: Session = Depends(get_db), _=Depends
 
 
 @router.get("", response_model=list[ServerOut])
-def list_servers(db: Session = Depends(get_db), _=Depends(get_current_user)):
-    return db.query(Server).all()
+def list_servers(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    _=Depends(get_current_user),
+):
+    offset = (page - 1) * page_size
+    return db.query(Server).offset(offset).limit(page_size).all()
 
 
 @router.get("/{server_id}", response_model=ServerOut)
