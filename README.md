@@ -18,18 +18,13 @@ Modular monolith — one FastAPI process, one PostgreSQL database. No separate s
 
 ```mermaid
 flowchart TD
-    Client["Client<br/>curl, Swagger, app"]
-    
-    subgraph ICCA["ICCA application — single FastAPI process"]
-        API["API layer<br/>routes + auth checks"]
-        Service["Service layer<br/>business rules"]
-        API --> Service
-    end
-    
-    DB[("PostgreSQL<br/>one database")]
+    Client["Client<br/>curl, Swagger, app"] --> API[API layer]
 
-    Client --> API
-    Service --> DB
+    subgraph ICCA[ICCA - single FastAPI process]
+        API["API layer<br/>routes + auth checks"] --> Service["Service layer<br/>updates findings + database calls"]
+    end
+
+    Service --> DB[("PostgreSQL<br/>one database")]
 ```
 
 Routes handle HTTP requests and responses. Services hold the actual logic. Models and schemas are kept separate from the API layer.
