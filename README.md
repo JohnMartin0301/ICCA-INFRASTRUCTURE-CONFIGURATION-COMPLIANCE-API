@@ -14,19 +14,36 @@ ICCA is a backend API for tracking infrastructure configuration and compliance. 
 - Pagination and filtering on list endpoints
 
 ## Architecture
-Modular monolith:
-```
-app/
-├── api/ # routes
-├── core/ # config and security
-├── db/ # database setup
-├── models/ # SQLAlchemy models
-├── schemas/ # Pydantic schemas
-├── services/ # business logic
-└── main.py
+Modular monolith — one FastAPI process, one PostgreSQL database. No separate services, no microservices.
+
+```mermaid
+flowchart TD
+    Client["Client<br/>curl, Swagger, app"]
+    
+    subgraph ICCA["ICCA application — single FastAPI process"]
+        API["API layer<br/>routes + auth checks"]
+        Service["Service layer<br/>business rules"]
+        API --> Service
+    end
+    
+    DB[("PostgreSQL<br/>one database")]
+
+    Client --> API
+    Service --> DB
 ```
 
 Routes handle HTTP requests and responses. Services hold the actual logic. Models and schemas are kept separate from the API layer.
+
+```
+app/
+├── api/        # routes
+├── core/       # config and security
+├── db/         # database setup
+├── models/     # SQLAlchemy models
+├── schemas/    # Pydantic schemas
+├── services/   # business logic
+└── main.py
+```
 
 ## Tech Stack
 Python, FastAPI, Pydantic, SQLAlchemy, PostgreSQL, Alembic, PyJWT, passlib (bcrypt), Pytest, httpx
