@@ -34,3 +34,14 @@ def client(db_session):
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def make_user(client):
+    def _make_user(username: str, password: str, role: str) -> dict:
+        client.post("/auth/register", json={"username": username, "password": password, "role": role})
+        response = client.post("/auth/login", data={"username": username, "password": password})
+        token = response.json()["access_token"]
+        return {"Authorization": f"Bearer {token}"}
+
+    return _make_user
